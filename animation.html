@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Animation</title>
+
+<!-- Welcome to ZIM at https://zimjs.com - Code Creativity!                              -->
+<!-- ZIM runs on the HTML Canvas powered by JavaScript and CreateJS https://createjs.com -->
+<!-- Founded by Inventor Dan Zen - http://danzen.com - Canadian New Media Award Winner   -->
+<!-- ZIM is free to use. You can donate to help improve ZIM at https://zimjs.com/donate  -->
+
+<!-- remote JS files -->
+<script src="https://zimjs.org/cdn/1.2.3/createjs_min.js"></script>
+<script src="https://zimjs.org/cdn/10.7.1/zim.js"></script>
+<!-- use zimjs.com/distill for minified individual functions! -->
+
+<!-- local JS files -->
+<script>
+
+// SCALING OPTIONS
+// scaling can have values as follows with full being the default
+// "fit"	sets canvas and stage to dimensions and scales to fit inside window size
+// "outside"	sets canvas and stage to dimensions and scales to fit outside window size
+// "full"	sets stage to window size with no scaling
+// "tagID"	add canvas to HTML tag of ID - set to dimensions if provided - no scaling
+
+const scaling = "fit"; // this will resize to fit inside the screen dimensions
+const width = 1024;
+const height = 768;
+const color = light; // ZIM colors like green, blue, pink, faint, clear, etc.
+const outerColor = dark; // any HTML colors like "violet", "#333", etc. are fine to use
+
+const frame = new Frame(scaling, width, height, color, outerColor);
+frame.on("ready", () => { // ES6 Arrow Function - like function(){}
+    zog("ready from ZIM Frame"); // logs in console (F12 - choose console)
+
+    const stage = frame.stage;
+    let stageW = frame.width;
+    let stageH = frame.height;
+
+    // see https://zimjs.com/learn.html for video and code tutorials
+    // see https://zimjs.com/docs.html for documentation
+    // see https://zimjs.com/bits.html for 64 Interactive Media techniques
+
+    // put your code here (you can delete this sample code)
+
+    // (width, height, internal color, border color, border width, border corner)
+    //array is top left, top right, bottom right, bottom left
+
+    // setInterval(() => {
+
+    //addTo adds to the stage or add to another container
+    //container is an incvisible holder, like a div in HTML
+    const leaves = new Container(stageW, stageH).addTo();
+
+    interval({min:200, max:2000}, () => {
+        new Rectangle(80, 80, orange, undefined, undefined, [80,0,80,0])
+        //adds to leaves container
+            .centerReg(leaves)
+            // .loc(Math.random()*stageW, -100)
+            .loc(rand(stageW),-100)
+            .animate({
+                props:{rotation:360},
+                time:1000, //in milliseconds (2 seconds)
+                loop:true,
+                ease:"linear"
+            })
+            .animate({
+                props:{y:stageH+100},
+                time:5000,
+                ease:"linear",
+                call:(target) => {
+                    target.removeFrom();
+                    scoreText.text = --score;
+                    if (score > 0) scoreText.text = --score; 
+                    // if (score<0){
+                    //     score = 0;
+                    //     scoreText.text = 0;
+                    // }
+                }
+            });
+
+    }, undefined, true); //end of interval where true is start right away (if 5, runs 5 times)
+
+    // }, 1000)
+
+
+
+        // setInterval(() => {
+        //     rect.rotation += 1;
+        //     stage.update();
+        // }, 5)
+        //runs function for 5 ms
+
+        //static method - on a static class
+        // Ticker.add (() => {
+        //     rect.rotation +=1;
+        // })
+
+        //time is in milliseconds
+        // .outline(); which outlines the propeller
+
+    //passing a configuration object - ZIM duo technique
+    // const rect2 = new Rectangle({corner:20, color:"pink"}).loc(100,100);
+
+    // const obj1 = {corner:20};
+    // zog(obj1.corner);
+    // can also do rect.center();
+
+    //number literal which can also be written as new Number(10);
+    const x = 10;
+
+    //String literal - or use new String("a");
+    const letter = "a";
+
+    //array literal - or use new Array(a[]);
+    const a = [];
+
+    //object literal
+    const obj = {color:"blue", border:10};
+    obj.age =5;
+    //obj["age"] = 10
+    zog(obj.age, obj.color, obj.border);
+
+    //(x, y, for x from center, for y from bottom)
+    //no quotes for CENTER or BOTTOM - defined as a global variable in zim framework (constant)
+    //in other frameworks, need to write "center" or "bottom"
+    const person = new Rectangle(40,60).centerReg().pos(0, 50, CENTER, BOTTOM);
+    //new Circle(radius, color, outline[default 1 px], outline px)
+    const head = new Circle(20, brown, dark, 2).center(person).mov(0,-50);//addTo(person);-goes to left top corcer
+
+    //basket is object, mousemove is what you want it to do, 10 is delay,
+    new MotionController(person, "mousemove", 10, "horizontal");
+
+    //not length but number of children!
+    //initial condition to loop nad operation
+    // timeout(3000, () => {
+    //     for (let i=0;i<leaves.numChildren;i++){
+    //
+    //         leaves.getChildAt(i).alp(.2); //changes alpha
+    //     }
+    //looping backwards in JS
+        // for (let i = leaves.numChildren-1;i>=0; i--){
+        //
+        // }
+    //
+    //     //simpler way to loop through a Container
+    //     //loops through a container as a method
+    //     //(leaf, i) is children and number of children
+    //     leaves.loop(leaf => {
+    //         leaf.sca(.5);
+    //     })
+    // })
+
+    //JS timeout is setTimeout(() => {
+    //}, 3000);
+
+    //find parameters in zim docs
+    //(message, size, font, colour)
+    let score = 0;
+    const scoreText = new Label(score, 50).pos(50,50,RIGHT);
+
+    Ticker.add(() => {
+//looping forwards in zim
+        leaves.loop(leaf => {
+             if(leaf.hitTestCircle(head)){
+                 zog("hitting");
+                 scoreText.text = ++score;
+                 //removes from the container
+                 leaf.stopAnimate();
+                 leaf.removeFrom();
+             }
+        }, true);//loops backwards
+
+    });
+    stage.update(); // this is needed to show any changes
+
+}); // end of ready
+
+</script>
+
+<meta name="viewport" content="width=device-width, user-scalable=no" />
+
+</head>
+
+<body>
+<!-- canvas with id="myCanvas" is made by zim Frame -->
+</body>
+</html>
